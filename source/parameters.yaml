@@ -1,0 +1,7 @@
+#variables
+brand:
+        description: "This represents the manufacturer brand of the Vehicle." 
+model: 
+        description: "This represents the model of the Vehicle."
+type: 
+        description: "This represents the type of the Vehicle."

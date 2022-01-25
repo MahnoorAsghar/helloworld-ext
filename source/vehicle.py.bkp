@@ -1,0 +1,58 @@
+"""
+This is the Vehicle Module.
+
+.. parameters:: parameters.yaml
+
+"""
+class Vehicle:  
+  def __init__(self, brand, model, type):
+    """
+    This function initialises the Vehicle.
+    
+    .. parameters:: parameters.yaml
+       
+       :brand: brand 
+       :model: model
+       :type: type
+
+    """
+    self.brand = brand
+    self.model = model
+    self.type = type
+    self.gas_tank_size = 14
+    self.fuel_level = 0
+
+  def change(self, brand, model, type):
+    """
+    This function changes the Vehicle's attributes.
+
+    .. parameters:: parameters.yaml
+
+       :brand: brand description
+       :model: model description
+       :type: type description
+    """
+    self.brand = brand
+    self.model = model
+    self.type = type
+    
+  #def fuel_up(self):
+    """
+    This function fuels the Vehicle.
+    
+    .. parameters:: parameters.yaml
+       
+       :self: self
+    """
+    #self.fuel_level = self.gas_tank_size
+    #print('Gas tank is now full.')
+  #def drive(self):
+    """
+    #This function drives the Vehicle.
+    
+    #.. parameters:: parameters.yaml
+       
+    #   :self: self
+    """
+    #print(f'The {self.model} is now driving.')
+                                                                                            

@@ -1,0 +1,137 @@
+from docutils import nodes
+from docutils.parsers.rst import Directive
+from docutils.core import publish_doctree
+import docutils
+from docutils.parsers.rst import Parser
+from docutils.utils import new_document
+import docutils.parsers.rst.states
+import re
+#import sphinx.util.docutils
+
+class NodeVisitor(docutils.nodes.GenericNodeVisitor):
+    def default_visit(self, node):
+        pass
+        #if node.__class__ == docutils.nodes.field_name:
+        #    print(f'node: {type(node)}\n{node.astext()}')
+        #if node.__class__ == docutils.nodes.field_body:
+        #    print(f'node: {type(node)}\n{node.astext()}')
+    
+    def visit_field_list(self, node):
+        print(f'visit_field_list {type(node)}\n{node}\n{dir(node)}\n')
+        
+        yelo = node.asdom()
+        #print(f'yelo: {type(yelo)}\n{yelo}\n{dir(yelo)}\n')
+        #print(f'yelo.nodeName: {yelo.nodeName}')
+        #print(f'yelo.nodetype: {yelo.nodeType}')
+        #print(f'yelo.nodevalue: {yelo.nodeValue}')
+        #print(f'yelo.tagname: {yelo.tagName}\n\n')
+        fields = yelo.getElementsByTagName('fields')
+        for f in fields:
+            field_name = f.getElementsByTagName('field_name')
+            print(f'{field_name} {type(field_name)} {dir(field_name)}')
+        
+        #if node.__class__ == docutils.nodes.field:
+        #    print(f'type(node): {type(node)}\n{dir(node)}\n')
+            
+        #    nodeTravList = node.traverse()
+        #    print(f'type(nodeTravList): {type(nodeTravList)}\t{dir(nodeTravList)}')
+        #    print(f'nodeTravList.count: {nodeTravList.count()}\n')
+
+        #    nodePopped = nodeTravList.pop()
+        #    print(f'nodePopped: {type(nodePopped)}\t{nodePopped}\n\n')
+
+
+class Parameters(Directive):
+    required_arguments = 1
+    has_content = True
+
+    def run(self):
+        print(f'Parameters.run called')
+        '''
+        parser = docutils.parsers.rst.Parser()
+        settings = docutils.frontend.OptionParser(
+                                    components=(docutils.parsers.rst.Parser,)).get_default_values()
+        document = new_document('Document', settings)
+       
+        for c in self.content:
+            parser.parse(c, document)        
+           
+        #empty dictionary to hold key-value pairs from the field list
+        #fieldList = {}
+        #nodeVisitor = NodeVisitor(document) 
+        #document.walk(nodeVisitor)
+       
+        
+        fields = document.getElementsByTagName('fields')
+        for f in fields:
+            field_name = f.getElementsByTagName('field_name')
+            print(f'{field_name} {type(field_name)} {dir(field_name)}')
+        '''
+
+
+        
+        state = self.state #body object
+
+        #finding the regex pattern of a field list marker
+        fieldMarkerTrans = state.transitions['field_marker']
+        pattern = fieldMarkerTrans[0].pattern
+        print(f'type(self.content): {type(self.content)}\n'
+                f'self.content.data: {self.content.data}\n'
+                f'self.content.items: {self.content.items}\n')
+        
+        field_list = {}
+        
+        for c in self.content:
+            print(f'c: {c}\ttype(c):{type(c)}\n')
+            match = re.match(pattern, c)    
+            #print(f'match: {match}\n') 
+            #print(f'{state.field()}\n')
+
+            field_tuple = state.field(match)
+            #print(f'field_tuple: {field_tuple}\n')
+
+            field = field_tuple[0]
+            print(f'field: {field}\n')
+           
+            trav = field.traverse()
+            #print(f'trav: {trav}\n')
+            
+            i=0
+
+            for t in trav:
+                field_body = None
+                print(f'iteration: {i}\nt:{t}')
+                if isinstance(t, docutils.nodes.field_name):
+                    field_name = t.astext()
+                    print(f'field_name: {field_name}') 
+                if isinstance(t, docutils.nodes.field_body):
+                    field_body = t.astext()
+                    print(f'field_body: {field_body}') 
+                    field_list[field_name] = field_body
+                    #print(f'field_list: {field_list}\n')
+                i = i+1
+
+            print(f'\nfield_list: {field_list}')
+            
+        paragraph_node = nodes.paragraph(text='Hello World')
+        return [paragraph_node]
+    
+    def importText(app, what, name, obj, options, lines):
+        print(f'Parameters.importText called.\n')
+        print(f'app: {app}\n'
+              f'what: {what}\n'
+              f'obj: {obj}\n'
+              f'options: {options}\n'
+              f'lines: {lines}\n')
+        lines = 'kya kaha app ne?'
+
+def setup(app):
+    print('Setting up docstring extension...\n')
+    #app.setup_extension('sphinx.ext.autodoc')
+    app.add_directive("parameters", Parameters)
+    #app.connect('autodoc-process-docstring', Parameters.importText)
+    return {
+        'version': '0.1',
+        'parallel_read_safe': True,
+        'parallel_write_safe': True,
+            }
